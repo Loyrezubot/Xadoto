@@ -20,6 +20,74 @@
       align-items: center;
       position: relative;
     }
+    .latam-flags-bar {
+      width: 100vw;
+      background: linear-gradient(90deg, #111 50%, #00ff88 100%);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0 8px 0;
+      z-index: 10;
+      box-shadow: 0 3px 16px #00ff8844;
+      position: fixed;
+      top: 0; left: 0;
+      font-size: 1rem;
+      font-family: inherit;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #00ff88bb;
+    }
+    .country-block {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(30, 40, 30, 0.92);
+      border-radius: 13px;
+      padding: 7px 12px 7px 8px;
+      margin: 0 0 4px 0;
+      box-shadow: 0 0 8px #00ff8833;
+      min-width: 125px;
+      transition: background .2s;
+    }
+    .country-block:hover {
+      background: #00ff8822;
+    }
+    .flag {
+      width: 30px;
+      height: 20px;
+      border-radius: 4px;
+      box-shadow: 0 0 5px #00ff8844;
+      object-fit: cover;
+      border: 1.3px solid #0f0;
+      background: #fff;
+    }
+    .country-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.08;
+    }
+    .country-name {
+      font-size: .96rem;
+      color: #0f0;
+      font-weight: bold;
+    }
+    .country-time {
+      font-size: .93rem;
+      color: #fff;
+      margin-top: -1px;
+      font-family: monospace;
+    }
+    @media (max-width: 1000px) {
+      .latam-flags-bar { font-size: 0.95rem; }
+      .country-block { min-width: 95px; }
+    }
+    @media (max-width: 650px) {
+      .latam-flags-bar { font-size: 0.80rem; gap: 7px; padding: 7px 0 4px 0;}
+      .flag { width: 20px; height: 14px; }
+      .country-block { min-width: 55px; padding: 4px 5px 4px 4px;}
+    }
     .animated-bg {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -55,6 +123,7 @@
       z-index: 1;
       animation: fadeInUp 1.2s cubic-bezier(.39,.575,.565,1.000) both;
       position: relative;
+      margin-top: 90px;
     }
     @keyframes fadeInUp {
       0% {
@@ -243,6 +312,7 @@
         min-width: 90vw;
         padding: 30px 8vw 30px 8vw;
       }
+      .login-container { margin-top: 120px; }
       .titulo {
         font-size: 1.2rem;
       }
@@ -251,6 +321,10 @@
   </style>
 </head>
 <body>
+  <!-- BARRA DE BANDERAS LATAM -->
+  <div class="latam-flags-bar" id="latam-flags-bar">
+    <!-- Bandera, nombre y hora: se llenan por JS -->
+  </div>
   <div class="animated-bg">
     <div class="circle circle1"></div>
     <div class="circle circle2"></div>
@@ -298,6 +372,57 @@
     <button class="logout-btn" id="logout-btn">Cerrar sesión</button>
   </div>
   <script>
+    // FLAGS & TIMEZONES LATAM
+    // timezones: https://en.wikipedia.org/wiki/List_of_time_zones_by_country
+    const latamCountries = [
+      { code: "ar", name: "Argentina", tz: "America/Argentina/Buenos_Aires", flag: "https://flagcdn.com/ar.svg" },
+      { code: "bo", name: "Bolivia", tz: "America/La_Paz", flag: "https://flagcdn.com/bo.svg" },
+      { code: "br", name: "Brasil", tz: "America/Sao_Paulo", flag: "https://flagcdn.com/br.svg" },
+      { code: "cl", name: "Chile", tz: "America/Santiago", flag: "https://flagcdn.com/cl.svg" },
+      { code: "co", name: "Colombia", tz: "America/Bogota", flag: "https://flagcdn.com/co.svg" },
+      { code: "cr", name: "Costa Rica", tz: "America/Costa_Rica", flag: "https://flagcdn.com/cr.svg" },
+      { code: "cu", name: "Cuba", tz: "America/Havana", flag: "https://flagcdn.com/cu.svg" },
+      { code: "do", name: "R. Dominicana", tz: "America/Santo_Domingo", flag: "https://flagcdn.com/do.svg" },
+      { code: "ec", name: "Ecuador", tz: "America/Guayaquil", flag: "https://flagcdn.com/ec.svg" },
+      { code: "sv", name: "El Salvador", tz: "America/El_Salvador", flag: "https://flagcdn.com/sv.svg" },
+      { code: "gt", name: "Guatemala", tz: "America/Guatemala", flag: "https://flagcdn.com/gt.svg" },
+      { code: "hn", name: "Honduras", tz: "America/Tegucigalpa", flag: "https://flagcdn.com/hn.svg" },
+      { code: "mx", name: "México", tz: "America/Mexico_City", flag: "https://flagcdn.com/mx.svg" },
+      { code: "ni", name: "Nicaragua", tz: "America/Managua", flag: "https://flagcdn.com/ni.svg" },
+      { code: "pa", name: "Panamá", tz: "America/Panama", flag: "https://flagcdn.com/pa.svg" },
+      { code: "py", name: "Paraguay", tz: "America/Asuncion", flag: "https://flagcdn.com/py.svg" },
+      { code: "pe", name: "Perú", tz: "America/Lima", flag: "https://flagcdn.com/pe.svg" },
+      { code: "pr", name: "Puerto Rico", tz: "America/Puerto_Rico", flag: "https://flagcdn.com/pr.svg" },
+      { code: "uy", name: "Uruguay", tz: "America/Montevideo", flag: "https://flagcdn.com/uy.svg" },
+      { code: "ve", name: "Venezuela", tz: "America/Caracas", flag: "https://flagcdn.com/ve.svg" }
+    ];
+    function updateFlagsBar() {
+      const bar = document.getElementById('latam-flags-bar');
+      bar.innerHTML = ""; // limpia
+      latamCountries.forEach((c, idx) => {
+        const now = new Date();
+        const time = now.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: c.tz,
+          hour12: false
+        });
+        const block = document.createElement('div');
+        block.className = 'country-block';
+        block.innerHTML = `
+          <img src="${c.flag}" alt="${c.name}" class="flag">
+          <div class="country-info">
+            <span class="country-name">${c.name}</span>
+            <span class="country-time" id="ctz-${idx}">${time}</span>
+          </div>
+        `;
+        bar.appendChild(block);
+      });
+    }
+    // Actualiza la hora cada 30s
+    updateFlagsBar();
+    setInterval(updateFlagsBar, 30000);
+
     // Guardar y obtener usuarios desde localStorage
     function saveUser(user) {
       let users = JSON.parse(localStorage.getItem('users') || "[]");
