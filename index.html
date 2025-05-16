@@ -280,72 +280,16 @@
       box-shadow: 0 0 10px #ff707066;
       letter-spacing: .5px;
     }
-    .user-panel {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(15, 20, 15, 0.98);
-      border: 3px solid #00ff88;
-      border-radius: 26px;
-      box-shadow: 0 0 60px #00ff8866, 0 0 14px #00ff8822;
-      padding: 48px 36px 36px 36px;
-      min-width: 320px;
-      margin-top: 40px;
-      z-index: 2;
-      animation: fadeInUp 1.2s cubic-bezier(.39,.575,.565,1.000) both;
-      position: relative;
-    }
-    .user-panel .user-avatar {
-      width: 86px;
-      height: 86px;
-      border-radius: 50%;
-      border: 4px solid #00ff88aa;
-      object-fit: cover;
-      box-shadow: 0 0 22px #00ff88cc;
-      margin-bottom: 18px;
-      background: #181818;
-    }
-    .user-panel .user-name {
-      font-size: 1.45rem;
-      color: #00ff88;
-      margin-bottom: 10px;
-      text-shadow: 0 0 6px #00ff8899;
-      font-family: 'Orbitron', Arial, sans-serif;
-    }
-    .user-panel .user-gmail {
-      font-size: 1.09rem;
-      color: #b6ffdc;
-      margin-bottom: 24px;
-      letter-spacing: 1px;
-      word-break: break-all;
-    }
-    .logout-btn {
-      background: transparent;
-      border: 2px solid #00ff88;
-      color: #00ff88;
-      border-radius: 10px;
-      padding: 10px 26px;
-      font-size: 1.08rem;
-      font-family: 'Orbitron', Arial, sans-serif;
-      cursor: pointer;
-      transition: background .2s, color .2s, box-shadow .2s;
-      box-shadow: 0 0 12px #00ff8844;
-    }
-    .logout-btn:hover {
-      background: #00ff88;
-      color: #191919;
-      box-shadow: 0 0 18px #00ff88cc;
-    }
     @media (max-width: 650px) {
-      .login-container, .user-panel {
+      .login-container {
         min-width: 90vw;
         padding: 30px 8vw 30px 8vw;
+        margin-top: 200px;
       }
-      .login-container { margin-top: 200px; }
       .titulo {
         font-size: 1.2rem;
       }
-      .avatar-img, .user-panel .user-avatar { width: 40px; height: 40px;}
+      .avatar-img { width: 40px; height: 40px;}
     }
   </style>
 </head>
@@ -395,13 +339,6 @@
     </form>
     <div class="login-link" id="show-login">¿Ya tienes cuenta? Inicia sesión</div>
   </div>
-  <!-- PANEL DE USUARIO -->
-  <div class="user-panel" id="user-panel">
-    <img src="" alt="Avatar" class="user-avatar" id="user-avatar">
-    <div class="user-name" id="user-name"></div>
-    <div class="user-gmail" id="user-gmail"></div>
-    <button class="logout-btn" id="logout-btn">Cerrar sesión</button>
-  </div>
   <script>
     // FLAGS & TIMEZONES LATAM
     const latamCountries = [
@@ -449,7 +386,6 @@
         bar.appendChild(block);
       });
     }
-    // Actualiza la hora cada 30s
     updateFlagsBar();
     setInterval(updateFlagsBar, 30000);
 
@@ -495,7 +431,7 @@
       }
     });
 
-    // Validación de solo Gmail y registro
+    // Registro
     document.getElementById('register-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const gmail = document.getElementById('register-gmail').value.trim();
@@ -503,8 +439,6 @@
       const password = document.getElementById('register-password').value;
       const error = document.getElementById('register-error');
       error.style.display = "none";
-
-      // Solo permite correos @gmail.com
       if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(gmail)) {
         error.textContent = "Solo se permite correo de Gmail";
         error.style.display = "block";
@@ -525,31 +459,23 @@
         error.style.display = "block";
         return;
       }
-      // Si no hay avatar subido, usa el avatar por defecto
       const avatarFinal = avatarDataUrl || "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=" + encodeURIComponent(username);
-
-      // Guarda usuario en localStorage
       saveUser({
         username: username,
         gmail: gmail,
         password: password,
         avatar: avatarFinal
       });
-
-      error.style.display = "none";
-      alert("¡Registro exitoso!\nUsuario: " + username + "\nCorreo: " + gmail);
-
-      // Limpiar formulario
-      document.getElementById('register-form').reset();
-      document.getElementById('avatar-img').src = "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=User";
-      avatarDataUrl = "";
-
-      // Cambiar a login
-      document.getElementById('register-container').style.display = 'none';
-      document.getElementById('login-container').style.display = 'flex';
+      // Guardar usuario logueado y redirigir al panel
+      localStorage.setItem('loggedUser', JSON.stringify({
+        username: username,
+        gmail: gmail,
+        avatar: avatarFinal
+      }));
+      window.location.href = "dashboard.html";
     });
 
-    // Validación de login
+    // Login
     document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const username = document.getElementById('login-username').value.trim();
@@ -567,27 +493,14 @@
         error.style.display = "block";
         return;
       }
-      // Mostrar panel de usuario
-      mostrarPanelUsuario(user);
-      // Limpiar formulario
-      document.getElementById('login-form').reset();
+      // Guardar usuario logueado y redirigir al panel
+      localStorage.setItem('loggedUser', JSON.stringify({
+        username: user.username,
+        gmail: user.gmail,
+        avatar: user.avatar
+      }));
+      window.location.href = "dashboard.html";
     });
-
-    // Mostrar panel de usuario logueado
-    function mostrarPanelUsuario(user) {
-      document.getElementById('login-container').style.display = 'none';
-      document.getElementById('register-container').style.display = 'none';
-      document.getElementById('user-avatar').src = user.avatar;
-      document.getElementById('user-name').textContent = user.username;
-      document.getElementById('user-gmail').textContent = user.gmail;
-      document.getElementById('user-panel').style.display = 'flex';
-    }
-
-    // Cerrar sesión
-    document.getElementById('logout-btn').onclick = function() {
-      document.getElementById('user-panel').style.display = 'none';
-      document.getElementById('login-container').style.display = 'flex';
-    };
   </script>
 </body>
 </html>
