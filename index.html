@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login Verde Seguro</title>
+  <title>Xadoto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Fuente moderna -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
@@ -20,6 +20,34 @@
       align-items: center;
       position: relative;
     }
+    .site-title {
+      width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 21;
+      background: linear-gradient(90deg, #111 60%, #00ff88 100%);
+      color: #00ff88;
+      font-size: 2.4rem;
+      font-family: 'Orbitron', Arial, sans-serif;
+      text-align: center;
+      letter-spacing: 8px;
+      font-weight: bold;
+      padding: 20px 0 10px 0;
+      text-shadow: 0 0 10px #00ff8899, 0 0 24px #00ff8844;
+      box-shadow: 0 6px 18px #00ff8822;
+      border-bottom: 2px solid #00ff88bb;
+      user-select: none;
+      pointer-events: none;
+      margin-bottom: 0;
+    }
+    @media (max-width: 650px) {
+      .site-title {
+        font-size: 1.3rem;
+        padding: 11px 0 5px 0;
+        letter-spacing: 4px;
+      }
+    }
     .latam-flags-bar {
       width: 100vw;
       background: linear-gradient(90deg, #111 50%, #00ff88 100%);
@@ -32,7 +60,7 @@
       z-index: 10;
       box-shadow: 0 3px 16px #00ff8844;
       position: fixed;
-      top: 0; left: 0;
+      top: 68px; left: 0;
       font-size: 1rem;
       font-family: inherit;
       letter-spacing: 1px;
@@ -84,7 +112,8 @@
       .country-block { min-width: 95px; }
     }
     @media (max-width: 650px) {
-      .latam-flags-bar { font-size: 0.80rem; gap: 7px; padding: 7px 0 4px 0;}
+      .latam-flags-bar { font-size: 0.80rem; gap: 7px; padding: 7px 0 4px 0; top: 45px;}
+      .site-title { font-size: 1.3rem; padding: 11px 0 5px 0;}
       .flag { width: 20px; height: 14px; }
       .country-block { min-width: 55px; padding: 4px 5px 4px 4px;}
     }
@@ -123,7 +152,7 @@
       z-index: 1;
       animation: fadeInUp 1.2s cubic-bezier(.39,.575,.565,1.000) both;
       position: relative;
-      margin-top: 90px;
+      margin-top: 160px;
     }
     @keyframes fadeInUp {
       0% {
@@ -312,7 +341,7 @@
         min-width: 90vw;
         padding: 30px 8vw 30px 8vw;
       }
-      .login-container { margin-top: 120px; }
+      .login-container { margin-top: 200px; }
       .titulo {
         font-size: 1.2rem;
       }
@@ -321,6 +350,8 @@
   </style>
 </head>
 <body>
+  <!-- TÍTULO DEL SITIO -->
+  <div class="site-title">XADOTO</div>
   <!-- BARRA DE BANDERAS LATAM -->
   <div class="latam-flags-bar" id="latam-flags-bar">
     <!-- Bandera, nombre y hora: se llenan por JS -->
@@ -373,7 +404,6 @@
   </div>
   <script>
     // FLAGS & TIMEZONES LATAM
-    // timezones: https://en.wikipedia.org/wiki/List_of_time_zones_by_country
     const latamCountries = [
       { code: "ar", name: "Argentina", tz: "America/Argentina/Buenos_Aires", flag: "https://flagcdn.com/ar.svg" },
       { code: "bo", name: "Bolivia", tz: "America/La_Paz", flag: "https://flagcdn.com/bo.svg" },
@@ -398,7 +428,7 @@
     ];
     function updateFlagsBar() {
       const bar = document.getElementById('latam-flags-bar');
-      bar.innerHTML = ""; // limpia
+      bar.innerHTML = "";
       latamCountries.forEach((c, idx) => {
         const now = new Date();
         const time = now.toLocaleTimeString('es-ES', {
