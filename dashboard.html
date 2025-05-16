@@ -13,6 +13,27 @@
       color: #fff;
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background .4s, color .4s;
+    }
+    body.light {
+      background: linear-gradient(135deg, #dfffe8 0%, #b2fff6 100%);
+      color: #222;
+    }
+    body.light .dashboard-header {
+      background: linear-gradient(90deg, #e0ffe0 60%, #0f0 100%);
+      color: #111;
+      border-bottom: 2px solid #00ff88bb;
+    }
+    body.light .profile-animated-border::before {
+      border-color: #00bb88;
+      box-shadow: 0 0 16px #00bb88cc, 0 0 36px #00bb8899;
+    }
+    body.light .menu-content, body.light .config-modal {
+      background: linear-gradient(135deg, #e0ffe0, #b2fff6 90%);
+      color: #222;
+    }
+    body.light .menu-item, body.light .config-modal label {
+      color: #0a6d3b;
     }
     .dashboard-header {
       width: 100vw;
@@ -34,6 +55,8 @@
       padding-left: 24px;
       min-width: 210px;
       height: 100%;
+      cursor: pointer;
+      user-select: none;
     }
     .profile-animated-border {
       position: relative;
@@ -144,7 +167,7 @@
       display: block;
       padding: 6px 0 6px 0;
       border-bottom: 1px solid #00ff8822;
-      transition: color 0.2s;
+      transition: color 0.2s, background 0.2s, padding-left 0.2s;
       cursor: pointer;
     }
     .menu-item:last-child { border-bottom: none;}
@@ -175,11 +198,159 @@
       padding: 130px 40px 40px 40px;
       font-size: 1.3rem;
     }
+    /* CONFIG MODAL */
+    .config-modal-bg {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.44);
+      align-items: center;
+      justify-content: center;
+      animation: fadeInConfigBg .35s;
+    }
+    .config-modal-bg.open { display: flex; }
+    @keyframes fadeInConfigBg { from {opacity: 0;} to {opacity: 1;} }
+    .config-modal {
+      background: linear-gradient(135deg, #191919, #00ff8850 100%);
+      color: #fff;
+      border-radius: 22px;
+      box-shadow: 0 0 60px #00ff8866, 0 0 14px #00ff8822;
+      min-width: 320px;
+      max-width: 92vw;
+      padding: 36px 34px 32px 34px;
+      animation: fadeInUp .45s cubic-bezier(.39,.575,.565,1.000);
+      position: relative;
+    }
+    .config-modal h2 {
+      margin: 0 0 16px 0;
+      font-size: 1.38rem;
+      color: #00ff88;
+      text-shadow: 0 0 10px #00ff8899;
+      font-family: 'Orbitron',Arial,sans-serif;
+    }
+    .config-modal label {
+      color: #b6ffdc;
+      font-size: 1.05rem;
+      margin-bottom: 2px;
+      margin-top: 12px;
+      display: block;
+      letter-spacing: 1.1px;
+    }
+    .config-modal .theme-group {
+      margin-bottom: 22px;
+    }
+    .config-modal .theme-option {
+      margin-right: 17px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.06rem;
+      cursor: pointer;
+    }
+    .config-modal .theme-option input[type="radio"] {
+      margin-right: 6px;
+      accent-color: #00ff88;
+      width: 1.1em; height: 1.1em;
+    }
+    .config-modal .info {
+      font-size: .98rem;
+      color: #b6ffdc;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      letter-spacing: .6px;
+      background: #111a;
+      border-radius: 7px;
+      padding: 3px 14px;
+      display: inline-block;
+    }
+    .config-modal .close-btn {
+      position: absolute;
+      right: 19px; top: 19px;
+      background: #00ff88;
+      color: #101010;
+      font-size: 1.09rem;
+      border: none;
+      border-radius: 10px;
+      padding: 2px 12px 1px 12px;
+      cursor: pointer;
+      font-family: 'Orbitron',Arial,sans-serif;
+      box-shadow: 0 0 8px #00ff88bb;
+      transition: background .2s, color .2s;
+    }
+    .config-modal .close-btn:hover {
+      background: #101010;
+      color: #00ff88;
+    }
+    .config-modal .divider {
+      margin: 22px 0 10px 0;
+      border: 0;
+      border-top: 1.7px solid #00ff8833;
+      width: 100%;
+    }
+    .config-modal input[type="email"], .config-modal input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      background: #1d1d1d;
+      border: 2px solid #00ff8855;
+      border-radius: 8px;
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 1.07rem;
+      transition: border .2s, box-shadow .2s;
+      outline: none;
+    }
+    body.light .config-modal input[type="email"], body.light .config-modal input[type="password"] {
+      background: #f0fff1;
+      color: #222;
+      border: 2px solid #00bb8855;
+    }
+    .config-modal .pass-btn {
+      background: linear-gradient(90deg, #23272a 60%, #00ff88 100%);
+      color: #fff;
+      font-size: 1.09rem;
+      font-weight: bold;
+      padding: 10px 0;
+      border: none;
+      border-radius: 12px;
+      margin-top: 4px;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: 0 0 8px #00ff8866;
+      letter-spacing: 1px;
+      transition: box-shadow 0.3s, background 0.3s, transform .1s;
+      outline: none;
+    }
+    .config-modal .pass-btn:hover {
+      background: linear-gradient(90deg, #00ff88 60%, #23272a 100%);
+      box-shadow: 0 0 18px #00ff88cc, 0 0 10px #00ff8844;
+      transform: scale(1.03);
+    }
+    .config-modal .success-msg, .config-modal .error-msg {
+      font-size: 1.01rem;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      background: #191919dd;
+      border-radius: 8px;
+      width: 100%;
+      text-align: center;
+      padding: 7px 2px 7px 2px;
+      box-shadow: 0 0 10px #00ff8844;
+      letter-spacing: .5px;
+    }
+    .config-modal .success-msg {
+      color: #00ff88;
+      background: #111a;
+      box-shadow: 0 0 10px #00ff88aa;
+    }
+    .config-modal .error-msg {
+      color: #ff7070;
+      box-shadow: 0 0 10px #ff707066;
+    }
   </style>
 </head>
 <body>
   <div class="dashboard-header">
-    <div class="profile-frame">
+    <div class="profile-frame" id="profile-config-btn" title="Configuración">
       <div class="profile-animated-border">
         <img src="" id="profile-avatar" class="profile-avatar" alt="Avatar">
       </div>
@@ -204,16 +375,39 @@
     <p>Este es tu panel principal.<br>
       Aquí puedes acceder a tu perfil, configuración y más.</p>
   </div>
+  <!-- MODAL CONFIGURACIÓN -->
+  <div class="config-modal-bg" id="config-modal-bg">
+    <div class="config-modal" id="config-modal">
+      <button class="close-btn" id="close-config">&times;</button>
+      <h2>Configuración</h2>
+      <div class="info">La configuración solo se aplica a este navegador</div>
+      <label>Aspecto</label>
+      <div class="theme-group" id="theme-group">
+        <label class="theme-option">
+          <input type="radio" name="theme" value="auto"> Usar tema del dispositivo
+        </label>
+        <label class="theme-option">
+          <input type="radio" name="theme" value="dark"> Tema oscuro
+        </label>
+        <label class="theme-option">
+          <input type="radio" name="theme" value="light"> Tema claro
+        </label>
+      </div>
+      <hr class="divider">
+      <label for="change-gmail">Cambiar contraseña</label>
+      <input type="email" id="change-gmail" placeholder="Tu Gmail registrado">
+      <input type="password" id="change-password" placeholder="Nueva contraseña">
+      <button class="pass-btn" id="change-pass-btn">Cambiar contraseña</button>
+      <div class="success-msg" id="pass-success" style="display:none"></div>
+      <div class="error-msg" id="pass-error" style="display:none"></div>
+    </div>
+  </div>
   <script>
-    // Obtén los datos del usuario desde localStorage
+    // Recoge usuario
     let user = JSON.parse(localStorage.getItem('loggedUser') || "null");
-    if (!user) {
-      // Si no hay usuario autenticado, redirige al login
-      window.location.href = "index.html";
-    } else {
-      document.getElementById('profile-avatar').src = user.avatar;
-      document.getElementById('profile-name').textContent = user.username;
-    }
+    if (!user) window.location.href = "index.html";
+    document.getElementById('profile-avatar').src = user.avatar;
+    document.getElementById('profile-name').textContent = user.username;
 
     // Menú animado
     const menuToggle = document.getElementById('menu-toggle');
@@ -221,7 +415,6 @@
     menuToggle.onclick = function() {
       menuContainer.classList.toggle('open');
     };
-    // Cerrar menú al hacer clic fuera
     document.addEventListener('click', function(e) {
       if (!menuContainer.contains(e.target)) {
         menuContainer.classList.remove('open');
@@ -233,6 +426,105 @@
       e.preventDefault();
       localStorage.removeItem('loggedUser');
       window.location.href = "index.html";
+    };
+
+    // Abrir configuración desde avatar o menú
+    function openConfig() {
+      document.getElementById('config-modal-bg').classList.add('open');
+      // Reflejar tema actual
+      let storedTheme = localStorage.getItem('xadoto-theme') || 'auto';
+      let radios = document.querySelectorAll('input[name="theme"]');
+      radios.forEach(r => r.checked = (r.value === storedTheme));
+    }
+    document.getElementById('profile-config-btn').onclick = openConfig;
+    // Desde menú también (si lo deseas)
+    document.querySelectorAll('.menu-item').forEach(item => {
+      if (item.textContent.includes('Configuración')) {
+        item.onclick = function(e){e.preventDefault(); menuContainer.classList.remove('open'); openConfig();};
+      }
+    });
+    // Cerrar modal
+    document.getElementById('close-config').onclick = function() {
+      document.getElementById('config-modal-bg').classList.remove('open');
+      // limpiar mensajes
+      document.getElementById('pass-success').style.display = "none";
+      document.getElementById('pass-error').style.display = "none";
+    };
+    document.getElementById('config-modal-bg').onclick = function(e){
+      if(e.target === this) this.classList.remove('open');
+      document.getElementById('pass-success').style.display = "none";
+      document.getElementById('pass-error').style.display = "none";
+    };
+
+    // Tema: auto/dark/light
+    function applyTheme(theme) {
+      if(theme === "auto"){
+        // Modo del SO
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.body.classList.toggle("light", !prefersDark);
+      } else if(theme === "dark"){
+        document.body.classList.remove("light");
+      } else if(theme === "light"){
+        document.body.classList.add("light");
+      }
+    }
+    // Al cargar, aplicar tema guardado
+    (function(){
+      let storedTheme = localStorage.getItem('xadoto-theme') || 'auto';
+      applyTheme(storedTheme);
+      // Escuchar cambios de SO si es auto
+      if(storedTheme === "auto"){
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e=>{
+          applyTheme("auto");
+        });
+      }
+    })();
+    // Cambiar tema desde el modal
+    document.getElementById('theme-group').addEventListener('change', function(e){
+      if(e.target.name === "theme"){
+        localStorage.setItem('xadoto-theme', e.target.value);
+        applyTheme(e.target.value);
+      }
+    });
+
+    // Cambiar contraseña
+    document.getElementById('change-pass-btn').onclick = function() {
+      const gmail = document.getElementById('change-gmail').value.trim();
+      const pass = document.getElementById('change-password').value;
+      const success = document.getElementById('pass-success');
+      const error = document.getElementById('pass-error');
+      success.style.display = "none";
+      error.style.display = "none";
+      if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(gmail)) {
+        error.textContent = "Introduce un Gmail válido";
+        error.style.display = "block";
+        return;
+      }
+      if (pass.length < 6) {
+        error.textContent = "La contraseña debe tener al menos 6 caracteres";
+        error.style.display = "block";
+        return;
+      }
+      // Buscar usuario en localStorage
+      let users = JSON.parse(localStorage.getItem('users') || "[]");
+      let idx = users.findIndex(u=>u.gmail===gmail);
+      if(idx === -1){
+        error.textContent = "No existe una cuenta con ese Gmail";
+        error.style.display = "block";
+        return;
+      }
+      users[idx].password = pass;
+      localStorage.setItem('users', JSON.stringify(users));
+      // Si es el usuario logueado, actualizarlo también
+      if(user.gmail === gmail){
+        user.password = pass;
+        localStorage.setItem('loggedUser', JSON.stringify(user));
+      }
+      success.textContent = "Contraseña cambiada correctamente";
+      success.style.display = "block";
+      error.style.display = "none";
+      document.getElementById('change-gmail').value = "";
+      document.getElementById('change-password').value = "";
     };
   </script>
 </body>
