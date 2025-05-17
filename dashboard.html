@@ -2,282 +2,401 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Xadoto - Panel</title>
+  <title>Xadoto - Dashboard estilo YouTube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --sidebar-width: 250px;
+      --header-height: 56px;
+      --main-bg: #0f0f0f;
+      --sidebar-bg: #181818;
+      --card-bg: #181818;
+      --card-hover: #222;
+      --accent: #00ff88;
+      --text: #fff;
+      --text-secondary: #aaa;
+      --search-bg: #222;
+      --chip-bg: #272727;
+      --chip-active-bg: #fff;
+      --chip-active-color: #181818;
+      --profile-size: 36px;
+    }
     body {
       margin: 0;
-      background: linear-gradient(135deg, #111 0%, #0f0 100%);
-      font-family: 'Orbitron', Arial, sans-serif;
-      color: #fff;
+      background: var(--main-bg);
+      color: var(--text);
+      font-family: 'Roboto', Arial, sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
-      transition: background .4s, color .4s;
     }
-    body.light {
-      background: linear-gradient(135deg, #dfffe8 0%, #b2fff6 100%);
-      color: #222;
-    }
-    body.light .dashboard-header {
-      background: linear-gradient(90deg, #e0ffe0 60%, #0f0 100%);
-      color: #111;
-      border-bottom: 2px solid #00ff88bb;
-    }
-    body.light .profile-animated-border::before {
-      border-color: #00bb88;
-      box-shadow: 0 0 16px #00bb88cc, 0 0 36px #00bb8899;
-    }
-    body.light .menu-content {
-      background: linear-gradient(135deg, #e0ffe0, #b2fff6 90%);
-      color: #222;
-    }
-    .dashboard-header {
-      width: 100vw;
+    /* HEADER */
+    .header {
+      height: var(--header-height);
+      background: var(--sidebar-bg);
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: fixed;
-      top: 0; left: 0;
-      background: linear-gradient(90deg, #111 60%, #00ff88 100%);
-      padding: 0 0 0 0;
-      z-index: 100;
-      height: 90px;
-      box-shadow: 0 3px 16px #00ff8844;
-      border-bottom: 2px solid #00ff88bb;
+      width: 100vw;
+      top: 0;
+      z-index: 20;
+      padding: 0 24px;
+      box-sizing: border-box;
     }
-    .profile-frame {
+    .header .logo-area {
       display: flex;
       align-items: center;
-      padding-left: 24px;
-      min-width: 210px;
-      height: 100%;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
+      gap: 18px;
     }
-    .profile-animated-border {
-      position: relative;
-      width: 63px;
-      height: 63px;
+    .header .yt-logo {
+      display: flex;
+      align-items: center;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1.45rem;
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 2px;
+      gap: 7px;
+    }
+    .header .yt-logo .dot {
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 4px;
+      margin-right: 3px;
+      display: inline-block;
+      box-shadow: 0 0 9px var(--accent);
+    }
+    .header .search-bar-area {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 14px;
     }
-    .profile-animated-border::before {
-      content: "";
-      position: absolute;
-      top: -5px; left: -5px; right: -5px; bottom: -5px;
-      border-radius: 50%;
-      border: 3.5px solid #00ff88;
-      box-shadow: 0 0 12px #00ff88cc, 0 0 36px #00ff8877;
-      animation: border-anim 2.2s linear infinite;
-      z-index: 0;
-    }
-    @keyframes border-anim {
-      0% { box-shadow: 0 0 12px #00ff88cc, 0 0 36px #00ff8877; }
-      50% { box-shadow: 0 0 24px #00ff88cc, 0 0 56px #00ff8899; }
-      100% { box-shadow: 0 0 12px #00ff88cc, 0 0 36px #00ff8877; }
-    }
-    .profile-avatar {
-      width: 53px;
-      height: 53px;
-      border-radius: 50%;
-      object-fit: cover;
-      z-index: 1;
-      border: 2px solid #191919;
-      background: #101010;
-    }
-    .profile-name {
-      font-size: 1.2rem;
-      color: #fff;
-      font-weight: bold;
-      text-shadow: 0 0 8px #00ff88bb;
-      letter-spacing: 1.3px;
-      margin-left: 10px;
-      max-width: 110px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .profile-menu {
-      position: absolute;
-      top: 70px;
-      left: 0;
-      background: linear-gradient(135deg, #101, #0f0);
-      border-radius: 18px;
-      box-shadow: 0 0 32px #00ff8866, 0 0 12px #00ff8844;
-      min-width: 180px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-15px) scale(0.95);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 100;
-      padding: 8px 0;
-    }
-    .profile-frame.menu-open .profile-menu {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-      animation: menuIn 0.35s cubic-bezier(.39,.575,.565,1.000);
-    }
-    .profile-menu-item {
-      color: #00ff88;
-      font-size: 1.09rem;
-      font-family: 'Orbitron', Arial, sans-serif;
-      letter-spacing: 1.1px;
-      margin: 0;
-      text-decoration: none;
-      display: block;
-      padding: 9px 25px 9px 23px;
-      border-bottom: 1px solid #00ff8822;
-      cursor: pointer;
-      background: transparent;
-      outline: none;
-      border: none;
-      text-align: left;
-      width: 100%;
-      transition: color 0.2s, background 0.2s, padding-left 0.2s;
-    }
-    .profile-menu-item:last-child { border-bottom: none;}
-    .profile-menu-item:hover {
-      color: #191919;
-      background: #00ff88;
-      border-radius: 8px;
-      padding-left: 32px;
-    }
-    .menu-container {
-      position: relative;
+    .search-bar {
+      width: 60vw;
+      max-width: 600px;
+      min-width: 160px;
       display: flex;
+      background: var(--search-bg);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1.2px solid #3336;
+      box-shadow: 0 2px 12px #0002;
       align-items: center;
-      height: 100%;
-      padding-right: 40px;
-      min-width: 170px;
-      justify-content: flex-end;
+      transition: border .2s;
     }
-    .menu-toggle {
+    .search-bar:focus-within {
+      border: 1.7px solid var(--accent);
+    }
+    .search-bar input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.07rem;
+      flex: 1;
+      padding: 10px 16px;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-bar button {
       background: none;
       border: none;
+      color: var(--text-secondary);
+      padding: 0 16px;
+      cursor: pointer;
+      font-size: 1.18rem;
+      display: flex;
+      align-items: center;
+      transition: color .2s;
+    }
+    .search-bar button:hover {
+      color: var(--accent);
+    }
+    .header .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .profile-img {
+      width: var(--profile-size);
+      height: var(--profile-size);
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      cursor: pointer;
+      transition: box-shadow .2s;
+    }
+    .header .profile-img:hover {
+      box-shadow: 0 0 18px var(--accent), 0 0 20px #00ff8855;
+    }
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: var(--header-height);
+      width: var(--sidebar-width);
+      height: calc(100vh - var(--header-height));
+      background: var(--sidebar-bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      padding-top: 10px;
+      box-sizing: border-box;
+      border-right: 1px solid #222;
+      overflow-y: auto;
+    }
+    .sidebar .section {
+      margin-bottom: 26px;
+    }
+    .sidebar .sidebar-link {
+      display: flex;
+      align-items: center;
+      font-size: 1.10rem;
+      color: var(--text-secondary);
+      padding: 13px 24px 13px 28px;
+      gap: 14px;
+      text-decoration: none;
+      border-radius: 10px;
+      margin: 2px 0;
+      transition: background .2s, color .2s;
+      cursor: pointer;
+      position: relative;
+      outline: none;
+    }
+    .sidebar .sidebar-link.active,
+    .sidebar .sidebar-link:hover {
+      background: #232323;
+      color: var(--accent);
+    }
+    .sidebar .section-title {
+      color: #b7b7b7;
+      font-size: .92rem;
+      font-weight: bold;
+      padding: 7px 0 2px 30px;
+      letter-spacing: 1px;
+    }
+    .sidebar .hr {
+      border: 0;
+      border-top: 1.2px solid #252525;
+      margin: 6px 0;
+    }
+    /* MAIN CONTENT */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      margin-top: var(--header-height);
+      padding: 28px 38px 30px 38px;
+      background: var(--main-bg);
+      min-height: calc(100vh - var(--header-height));
+      transition: background .4s, color .4s;
+    }
+    /* CHIPS (categorías/filtros) */
+    .chips-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .chip {
+      background: var(--chip-bg);
+      color: var(--text);
+      padding: 9px 18px;
+      border-radius: 18px;
+      font-size: 1.01rem;
+      font-weight: 500;
+      border: none;
       cursor: pointer;
       outline: none;
-      z-index: 2;
-      padding: 0;
-      margin-left: 12px;
+      transition: background .2s, color .2s;
+      border: 1.4px solid transparent;
     }
-    .menu-toggle .bar {
-      display: block;
-      width: 36px;
-      height: 4px;
-      margin: 7px 0;
-      background: #00ff88;
-      border-radius: 2px;
-      transition: 0.4s;
-      box-shadow: 0 0 8px #00ff88;
+    .chip.active,
+    .chip:focus {
+      background: var(--chip-active-bg);
+      color: var(--chip-active-color);
+      border-color: var(--accent);
     }
-    .menu-content {
-      position: absolute;
-      top: 80px;
-      right: 0;
-      background: linear-gradient(135deg, #101, #0f0);
-      border-radius: 18px;
-      padding: 18px 36px 16px 26px;
-      box-shadow: 0 0 32px #00ff8866, 0 0 12px #00ff8844;
-      min-width: 200px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-20px) scale(0.95);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 10;
+    /* VIDEO GRID */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 30px 18px;
+      width: 100%;
+      min-height: 340px;
+      margin-bottom: 30px;
+      animation: fadeInUp .7s;
     }
-    .menu-container.open .menu-content {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-      animation: menuIn 0.35s cubic-bezier(.39,.575,.565,1.000);
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px);}
+      100% { opacity: 1; transform: translateY(0);}
     }
-    @keyframes menuIn {
-      0% { opacity: 0; transform: translateY(-40px) scale(0.9);}
-      100% { opacity: 1; transform: translateY(0) scale(1);}
-    }
-    .menu-item {
-      color: #00ff88;
-      font-size: 1.13rem;
-      font-family: 'Orbitron', Arial, sans-serif;
-      letter-spacing: 1.2px;
-      margin: 11px 0;
-      text-decoration: none;
-      display: block;
-      padding: 6px 0 6px 0;
-      border-bottom: 1px solid #00ff8822;
-      transition: color 0.2s, background 0.2s, padding-left 0.2s;
+    .video-card {
+      background: var(--card-bg);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 18px #00ff8811;
       cursor: pointer;
+      transition: box-shadow .23s, background .23s, transform .13s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      outline: none;
     }
-    .menu-item:last-child { border-bottom: none;}
-    .menu-item:hover {
-      color: #191919;
-      background: #00ff88;
+    .video-card:hover {
+      background: var(--card-hover);
+      box-shadow: 0 6px 28px #00ff8844;
+      transform: translateY(-5px) scale(1.03);
+    }
+    .video-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: #181818;
+      display: block;
+      transition: filter .2s;
+    }
+    .video-card:hover .video-thumb {
+      filter: brightness(1.12) saturate(1.1);
+    }
+    .video-info {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 13px;
+      padding: 13px 13px 13px 13px;
+    }
+    .video-info .video-channel {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #282828;
+      flex-shrink: 0;
+      border: 2px solid #232;
+      margin-top: 3px;
+    }
+    .video-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .video-title {
+      color: var(--text);
+      font-size: 1.07rem;
+      font-weight: bold;
+      margin: 0 0 1px 0;
+      letter-spacing: .1px;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 2.1em;
+      max-height: 2.2em;
+    }
+    .video-channel-name {
+      color: var(--accent);
+      font-size: .97rem;
+      font-weight: bold;
+      margin-bottom: 1px;
+    }
+    .video-stats {
+      color: var(--text-secondary);
+      font-size: 0.93rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .video-dot {
+      font-size: 1.2em;
+      color: #555;
+      margin: 0 5px;
+    }
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 9px;
+      background: #191919;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #262626;
       border-radius: 8px;
-      padding-left: 10px;
     }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #333;
+    }
+    /* Responsive */
     @media (max-width: 900px) {
-      .dashboard-header { flex-direction: column; height: auto; }
-      .profile-frame, .menu-container { justify-content: center; min-width: 0; padding: 8px 0;}
-      .site-title { font-size: 1.4rem;}
+      :root { --sidebar-width: 63px; }
+      .sidebar .sidebar-link span { display: none; }
+      .sidebar .section-title, .sidebar .hr { display: none; }
+      .main-content { padding: 22px 6vw 22px 6vw;}
+      .video-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
     }
     @media (max-width: 650px) {
-      .dashboard-header { flex-direction: column; height: auto; padding: 0;}
-      .profile-frame { padding-left: 10px;}
-      .menu-container { padding-right: 10px;}
-      .profile-animated-border { width: 41px; height: 41px;}
-      .profile-avatar { width: 33px; height: 33px;}
-      .profile-name { font-size: 0.97rem;}
-      .menu-toggle .bar { width: 22px; height: 3px; margin: 5px 0;}
-      .menu-content { min-width: 120px; padding: 10px 14px 10px 11px;}
-      .menu-item { font-size: 0.97rem;}
-      .profile-menu { min-width: 110px; }
-    }
-    .dashboard-content {
-      max-width: 100vw;
-      padding: 130px 40px 40px 40px;
-      font-size: 1.3rem;
+      .main-content { padding: 9px 3vw 9px 3vw;}
+      .header { padding: 0 6px;}
+      .search-bar { max-width: 95vw; }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard-header">
-    <div class="profile-frame" id="profile-frame" title="Menú de usuario">
-      <div class="profile-animated-border">
-        <img src="" id="profile-avatar" class="profile-avatar" alt="Avatar">
-      </div>
-      <span class="profile-name" id="profile-name"></span>
-      <div class="profile-menu" id="profile-menu">
-        <button class="profile-menu-item" id="menu-perfil">Mi perfil</button>
-        <button class="profile-menu-item" id="menu-config">Configuración</button>
-        <button class="profile-menu-item" id="menu-logout">Cerrar sesión</button>
-      </div>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-area">
+      <span style="font-size:2rem;cursor:pointer;" id="menu-btn">&#9776;</span>
+      <span class="yt-logo"><span class="dot"></span>Xadoto</span>
     </div>
-    <div class="menu-container" id="menu-container">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
-      <div class="menu-content" id="menu-content">
-        <a class="menu-item" href="#">Inicio</a>
-        <a class="menu-item" href="#">Mi perfil</a>
-        <a class="menu-item" href="#" id="menu-config-lateral">Configuración</a>
-        <a class="menu-item" href="#" id="logout">Cerrar sesión</a>
-      </div>
+    <div class="search-bar-area">
+      <form class="search-bar" id="searchForm" autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Buscar" aria-label="Buscar videos">
+        <button type="submit" aria-label="Buscar">
+          <svg height="24" width="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" stroke="currentColor"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div class="header-actions">
+      <img src="" id="profile-avatar-header" class="profile-img" alt="Avatar">
     </div>
   </div>
-  <div class="dashboard-content" id="dashboard-content">
-    <h2>¡Bienvenido a Xadoto!</h2>
-    <p>Este es tu panel principal.<br>
-      Aquí puedes acceder a tu perfil, configuración y más.</p>
-  </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="section">
+      <a class="sidebar-link active" href="#"><span>Principal</span></a>
+      <a class="sidebar-link" href="#"><span>Shorts</span></a>
+      <a class="sidebar-link" href="#"><span>Suscripciones</span></a>
+    </div>
+    <hr class="hr">
+    <div class="section">
+      <div class="section-title">Tú</div>
+      <a class="sidebar-link" href="#"><span>Historial</span></a>
+      <a class="sidebar-link" href="#"><span>Ver más tarde</span></a>
+      <a class="sidebar-link" href="#"><span>Videos que me gustan</span></a>
+    </div>
+  </nav>
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="chips-row" id="chips-row">
+      <!-- Chips dinámicos -->
+    </div>
+    <div class="video-grid" id="videoGrid">
+      <!-- Tarjetas de video dinámicas -->
+    </div>
+  </main>
   <script>
-    // TEMA: sincronizado
+    // Cargar avatar usuario
+    let user = JSON.parse(localStorage.getItem('loggedUser') || "null");
+    if (!user) window.location.href = "index.html";
+    document.getElementById('profile-avatar-header').src = user.avatar;
+
+    // Tema sincronizado
     function applyTheme(theme) {
       if(theme === "auto"){
         const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -298,60 +417,114 @@
       }
     })();
 
-    // Datos usuario
-    let user = JSON.parse(localStorage.getItem('loggedUser') || "null");
-    if (!user) window.location.href = "index.html";
-    document.getElementById('profile-avatar').src = user.avatar;
-    document.getElementById('profile-name').textContent = user.username;
-
-    // Menú animado lateral
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuContainer = document.getElementById('menu-container');
-    menuToggle.onclick = function() {
-      menuContainer.classList.toggle('open');
-    };
-    document.addEventListener('click', function(e) {
-      if (!menuContainer.contains(e.target)) {
-        menuContainer.classList.remove('open');
-      }
-      if (!document.getElementById('profile-frame').contains(e.target)) {
-        document.getElementById('profile-frame').classList.remove('menu-open');
-      }
+    // Chips dinámicos (categorías/filtros)
+    const chips = [
+      {name:"Todos", active:true}, {name:"Videojuegos"}, {name:"Música"}, {name:"Mixes"},
+      {name:"Noticias"}, {name:"Podcasts"}, {name:"En tiempo real"}, {name:"Cumbias"},
+      {name:"El Rubius"}, {name:"Reguetón"}, {name:"EA Sports FC 25"}, {name:"La Liga"},
+      {name:"Liga de Campeones de la UEFA"}, {name:"Audio comentario"}, {name:"Entrevistas"}
+    ];
+    const chipsRow = document.getElementById('chips-row');
+    chips.forEach((chip, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (chip.active ? ' active' : '');
+      btn.textContent = chip.name;
+      btn.onclick = function(){
+        document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        // Aquí puedes filtrar videos por categoría según chip.name
+      };
+      chipsRow.appendChild(btn);
     });
 
-    // Menú contextual avatar
-    const profileFrame = document.getElementById('profile-frame');
-    const profileMenu = document.getElementById('profile-menu');
-    profileFrame.onclick = function(e){
-      e.stopPropagation();
-      profileFrame.classList.toggle('menu-open');
-    };
-
-    // Cerrar sesión desde ambos menús
-    function logout() {
-      localStorage.removeItem('loggedUser');
-      window.location.href = "index.html";
-    }
-    document.getElementById('logout').onclick = function(e) { e.preventDefault(); logout(); };
-    document.getElementById('menu-logout').onclick = function(e) { e.preventDefault(); logout(); };
-
-    // Ir a configuración: redirige a otra página (config.html)
-    function goToConfig() {
-      window.location.href = "config.html";
-    }
-    document.getElementById('menu-config').onclick = function(e) { e.preventDefault(); goToConfig(); };
-    document.getElementById('menu-config-lateral').onclick = function(e) { e.preventDefault(); goToConfig(); };
-
-    // "Mi perfil"
-    document.getElementById('menu-perfil').onclick = function(e) {
-      e.preventDefault();
-      profileFrame.classList.remove('menu-open');
-      document.getElementById('dashboard-content').innerHTML = `
-        <h2>Mi Perfil</h2>
-        <p>Usuario: <b>${user.username}</b></p>
-        <p>Correo: <b>${user.gmail}</b></p>
-        <img src="${user.avatar}" style="width:130px;border-radius:50%;margin-top:10px;border:4px solid #00ff88;box-shadow:0 0 14px #00ff88;">
+    // Videos mock animados
+    const videos = [
+      {
+        thumb: "https://i.ytimg.com/vi/6Uy4qLl19Pk/mqdefault.jpg",
+        title: "ELDED Y JUANSGUARNIZO PLANEANDO UN CHUPISTREAM",
+        channel: "FAN DEL DED",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLTKZ0H9YQ=s68-c-k-c0x00ffffff-no-rj",
+        stats: "292 vistas · hace 19 minutos"
+      },
+      {
+        thumb: "https://i.ytimg.com/vi/9A7d3A6L5FQ/mqdefault.jpg",
+        title: "BAD BUNNY - KETU TeCRÉ (Video Oficial) | DeBÍ TIRAR Más FOTOs",
+        channel: "Bad Bunny",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLSGE3k0Dg=s68-c-k-c0x00ffffff-no-rj",
+        stats: "1.1 M de vistas · hace 9 horas"
+      },
+      {
+        thumb: "https://i.ytimg.com/vi/5g6KQ5v6XQY/mqdefault.jpg",
+        title: "Centro de Monitoreo Reconquista EN VIVO",
+        channel: "Municipalidad de Reconquista",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLRIx8od3w=s68-c-k-c0x00ffffff-no-rj",
+        stats: "2 lo están viendo",
+        live: true
+      },
+      {
+        thumb: "https://i.ytimg.com/vi/YOi8F2TWj3I/mqdefault.jpg",
+        title: "¿FIN DEL BIG SIX?",
+        channel: "Davoo Xeneize Plus",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLQmQd8jiw=s68-c-k-c0x00ffffff-no-rj",
+        stats: "309 k vistas · hace 1 día"
+      },
+      {
+        thumb: "https://i.ytimg.com/vi/x1bRr9l5h7M/mqdefault.jpg",
+        title: "¿NOS ATACAN EL MURO? ¿MUERO? 😱 ARK asa #3",
+        channel: "Nexxuz World",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLQe7qjZUg=s68-c-k-c0x00ffffff-no-rj",
+        stats: "63 k vistas · hace 10 horas"
+      },
+      {
+        thumb: "https://i.ytimg.com/vi/0wW6ia3XK9g/mqdefault.jpg",
+        title: "TIENE DIENTES PERO NO COME",
+        channel: "RobleisJAJA",
+        channelImg: "https://yt3.ggpht.com/ytc/AKedOLSXIKJvA=s68-c-k-c0x00ffffff-no-rj",
+        stats: "135 k vistas · hace 3 días"
+      }
+    ];
+    const grid = document.getElementById('videoGrid');
+    videos.forEach(vid => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.tabIndex = 0;
+      card.innerHTML = `
+        <img class="video-thumb" src="${vid.thumb}" alt="Miniatura">
+        <div class="video-info">
+          <img class="video-channel" src="${vid.channelImg}" alt="Canal">
+          <div class="video-meta">
+            <div class="video-title">${vid.title}</div>
+            <div class="video-channel-name">${vid.channel}</div>
+            <div class="video-stats">${vid.stats}${vid.live ? ' <span style="color:#f44;font-size:0.97em;font-weight:bold;margin-left:8px;">● EN VIVO</span>' : ''}</div>
+          </div>
+        </div>
       `;
+      grid.appendChild(card);
+    });
+
+    // Menu lateral collapsible en mobile
+    document.getElementById('menu-btn').onclick = function(){
+      document.getElementById('sidebar').style.left =
+        document.getElementById('sidebar').style.left === "0px" ? "-300px" : "0px";
+    };
+    // Sidebar autoclose cuando se hace click fuera (en mobile)
+    document.body.addEventListener('click', function(e){
+      if(window.innerWidth < 900 && !document.getElementById('sidebar').contains(e.target) && !document.getElementById('menu-btn').contains(e.target)){
+        document.getElementById('sidebar').style.left = "-300px";
+      }
+    });
+    // Al cargar, oculta sidebar en mobile
+    if(window.innerWidth < 900) document.getElementById('sidebar').style.left = "-300px";
+    window.addEventListener('resize', function(){
+      if(window.innerWidth < 900) document.getElementById('sidebar').style.left = "-300px";
+      else document.getElementById('sidebar').style.left = "0px";
+    });
+
+    // Buscador animado (sólo frontend)
+    document.getElementById('searchForm').onsubmit = function(e){
+      e.preventDefault();
+      const val = document.getElementById('searchInput').value.trim();
+      alert('Simular búsqueda de: ' + val);
     };
   </script>
 </body>
